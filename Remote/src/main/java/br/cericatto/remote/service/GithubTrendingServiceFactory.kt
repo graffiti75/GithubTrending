@@ -13,7 +13,7 @@ object GithubTrendingServiceFactory {
         val okHttpClient = makeOkHttpClient(
             makeLoggingInterceptor((isDebug))
         )
-        return makeGithubTrendingService(okHttpClient,Gson())
+        return makeGithubTrendingService(okHttpClient, Gson())
     }
 
     private fun makeGithubTrendingService(okHttpClient: OkHttpClient, gson: Gson): GithubTrendingService {
