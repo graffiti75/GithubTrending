@@ -17,7 +17,8 @@ class ProjectsDataRepository @Inject constructor(
     : ProjectsRepository {
 
     override fun getProjects(): Observable<List<Project>> {
-        return Observable.zip(cache.areProjectsCached().toObservable(),
+        return Observable.zip(
+            cache.areProjectsCached().toObservable(),
             cache.isProjectsCacheExpired().toObservable(),
             BiFunction<Boolean, Boolean, Pair<Boolean, Boolean>> {
                 areCached, isExpired -> Pair(areCached, isExpired)
@@ -30,8 +31,8 @@ class ProjectsDataRepository @Inject constructor(
                 .saveProjects(projects)
                 .andThen(Observable.just(projects))
             }
-            .map {
-                it.map {
+            .map { projectEntity ->
+                projectEntity.map {
                     mapper.mapFromEntity(it)
                 }
             }
@@ -48,7 +49,7 @@ class ProjectsDataRepository @Inject constructor(
     override fun getBookmarkedProjects(): Observable<List<Project>> {
         return factory.getCacheDataStore().getBookmarkedProjects()
             .map {
-                it.map { mapper.mapFromEntity(it) }
+                it.map { projectEntity -> mapper.mapFromEntity(projectEntity) }
             }
     }
 }

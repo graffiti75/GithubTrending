@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.Menu
 import br.cericatto.presentation.state.Resource
 import android.view.MenuItem
@@ -22,6 +23,10 @@ import kotlinx.android.synthetic.main.activity_browse.*
 import javax.inject.Inject
 
 class BrowseActivity : AppCompatActivity() {
+
+    // tag for debugging purpose
+    private  val tag: String = BrowseActivity::class.java.simpleName
+
     @Inject lateinit var browseAdapter: BrowseAdapter
     @Inject lateinit var mapper: ProjectViewMapper
     @Inject lateinit var viewModelFactory: ViewModelFactory
@@ -69,6 +74,8 @@ class BrowseActivity : AppCompatActivity() {
     }
 
     private fun handleDataState(resource: Resource<List<ProjectView>>) {
+        // displaying the resource status in Logcat
+        Log.i(tag, resource.status.toString())
         when (resource.status) {
             ResourceState.SUCCESS -> {
                 setupScreenForSuccess(resource.data?.map {
@@ -78,6 +85,9 @@ class BrowseActivity : AppCompatActivity() {
             ResourceState.LOADING -> {
                 progress.visibility = View.VISIBLE
                 recycler_projects.visibility = View.GONE
+            }
+            ResourceState.ERROR ->{
+                Log.e(tag, resource.message)
             }
         }
     }
