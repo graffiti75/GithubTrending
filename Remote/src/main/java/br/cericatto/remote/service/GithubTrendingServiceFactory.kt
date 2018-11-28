@@ -1,9 +1,11 @@
 package br.cericatto.remote.service
 
+import com.google.gson.Gson
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object GithubTrendingServiceFactory {
@@ -11,14 +13,15 @@ object GithubTrendingServiceFactory {
         val okHttpClient = makeOkHttpClient(
             makeLoggingInterceptor((isDebug))
         )
-        return makeGithubTrendingService(okHttpClient)
+        return makeGithubTrendingService(okHttpClient,Gson())
     }
 
-    private fun makeGithubTrendingService(okHttpClient: OkHttpClient): GithubTrendingService {
+    private fun makeGithubTrendingService(okHttpClient: OkHttpClient, gson: Gson): GithubTrendingService {
         val retrofit = Retrofit.Builder()
             .baseUrl("https://api.github.com/")
             .client(okHttpClient)
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
         return retrofit.create(GithubTrendingService::class.java)
     }
